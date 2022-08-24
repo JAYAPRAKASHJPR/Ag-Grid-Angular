@@ -14,7 +14,6 @@ export class InputCellRendererComponent
   params;
   agInit(params: ICellRendererParams<any, any>): void {
      this.params = params.value;
-     console.log(this.params)
   }
   refresh(params: ICellRendererParams<any, any>): boolean {
     throw new Error('Method not implemented.');

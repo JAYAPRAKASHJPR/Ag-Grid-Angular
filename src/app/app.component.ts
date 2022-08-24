@@ -1,5 +1,10 @@
 import { Component, OnInit, VERSION } from '@angular/core';
-import { GridOptions } from 'ag-grid-community';
+import {
+  GetContextMenuItemsParams,
+  GridOptions,
+  MenuItemDef,
+  _,
+} from 'ag-grid-community';
 import { InputCellRendererComponent } from './input-cell-renderer/input-cell-renderer.component';
 
 @Component({
@@ -12,15 +17,18 @@ export class AppComponent implements OnInit {
   columnDefs: any;
   rowData: Object[] = [];
   gridOptions;
+
   constructor() {}
   ngOnInit(): void {
     this.initGrid();
     this.gridOptions = <GridOptions>{
+      getContextMenuItems: this.getContextMenuItems,
       suppressPaginationPanel: true,
       rowHeight: 35,
       rowSelection: 'multiple',
       multiSortKey: 'ctrl',
       rowBuffer: 50,
+
       defaultColDef: {
         editable: false,
         sortable: true,
@@ -33,6 +41,11 @@ export class AppComponent implements OnInit {
         rowMultiSelectWithClick: true,
       },
     };
+    setTimeout(() => {
+      this.gridOptions.context = {
+        thisComponent: this,
+      };
+    }, 10);
   }
   initGrid() {
     this.columnDefs = [
@@ -718,34 +731,34 @@ export class AppComponent implements OnInit {
     ];
   }
   onGridReady($event) {
-    this.rowData = [
-      { Quantity: '20' },
-      { Quantity: '20' },
-      { Quantity: '20' },
-      { Quantity: '20' },
-      { Quantity: '20' },
-      { Quantity: '20' },
-      { Quantity: '20' },
-      { Quantity: '20' },
-      { Quantity: '20' },
-      { Quantity: '20' },
-      { Quantity: '20' },
-      { Quantity: '20' },
-      { Quantity: '20' },
-      { Quantity: '20' },
-      { Quantity: '20' },
-      { Quantity: '20' },
-      { Quantity: '20' },
-      { Quantity: '20' },
-      { Quantity: '20' },
-      { Quantity: '20' },
-      { Quantity: '20' },
-      { Quantity: '20' },
-      { Quantity: '20' },
-      { Quantity: '20' },
-      { Quantity: '20' },
-      { Quantity: '20' },
-      { Quantity: '20' },
+    this.rowData = this.addAdditionalRows([{ Quantity: 50 }]);
+  }
+  addAdditionalRows(dataItems: Array<any>): any[] {
+    for (let i = 0; i < 800; i++) {
+      let row = _.cloneObject(dataItems[0]);
+      row.itemNo = i + 3;
+      row.rootItemNo = i + 3;
+      row.cmirPriorityIndicator = true;
+      dataItems.push(row);
+    }
+    return dataItems;
+  }
+  getContextMenuItems(params) {
+    console.log('getContextMenuItems');
+    var result: (string | MenuItemDef)[] = [
+      {
+        // custom item
+
+        name: 'Copy To Group ',
+        action: () => {
+          window.alert('Alerting about ' + params.value);
+        },
+      },
+
+      'copy',
+      'separator',
+      'chartRange',
     ];
+    return result;
   }
 }
